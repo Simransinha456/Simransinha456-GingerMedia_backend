@@ -34,19 +34,20 @@ async function createTable() {
     client.release();
   } catch (error) {
     console.error("Error creating table:", error);
-  } 
-//   finally {
-//     // Close the connection pool
-//   }
+  }
+  
 }
 
-// Call the function to create the table
 createTable();
 console.log("Database connected successfully");
 
 app.use(express.json());
 
-// Create a new user
+// Created new user
+app.get("/", async (req, res) => {
+  res.json("Welcome to the user1 API");
+});
+
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
   console.log(req.body)
@@ -84,12 +85,12 @@ app.post("/login", async (req, res) => {
 
 app.put("/profile/:id", async (req, res) => {
   const { age, dob, contact } = req.body;
-  const {id} = req.params;
+  const { id } = req.params;
   console.log(id)
   try {
     const result = await pool.query(
       `UPDATE user1 SET age = $1, dob = $2, contact = $3 WHERE id = $4 RETURNING *`,
-      [age, dob, contact,id]
+      [age, dob, contact, id]
     );
     res.json({
       message: "Profile saved successfully",
@@ -104,27 +105,26 @@ app.put("/profile/:id", async (req, res) => {
 });
 
 app.put("/profile/:id/edit", async (req, res) => {
-    const { age, dob, contact } = req.body;
-    const { id } = req.params;
-  
-    try {
-      const result = await pool.query(
-        `UPDATE user1 SET age = $1, dob = $2, contact = $3 WHERE id = $4 RETURNING *`,
-        [age, dob, contact, id]
-      );
-  
-      res.json({
-        message: "Profile updated successfully",
-        profile: result.rows[0],
-      });
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      res.status(500).json({ error: "An error occurred while updating the profile" });
-    }
-  });
-  
+  const { age, dob, contact } = req.body;
+  const { id } = req.params;
 
-// Start the server
+  try {
+    const result = await pool.query(
+      `UPDATE user1 SET age = $1, dob = $2, contact = $3 WHERE id = $4 RETURNING *`,
+      [age, dob, contact, id]
+    );
+
+    res.json({
+      message: "Profile updated successfully",
+      profile: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    res.status(500).json({ error: "An error occurred while updating the profile" });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
