@@ -49,6 +49,7 @@ app.use(express.json());
 // Create a new user
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
+  console.log(req.body)
   try {
     const result = await pool.query(
       "INSERT INTO user1 (username, email, password) VALUES ($1, $2, $3) RETURNING *",
